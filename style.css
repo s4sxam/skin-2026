@@ -1,0 +1,71 @@
+ @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;700;900&family=Inter:wght@300;400;600&display=swap');
+
+:root {
+    --g-blue: #4285F4; --g-green: #34A853; --bg: #000000;
+    --card: #111111; --text: #f1f3f4; --primary: #00e676;
+}
+
+body {
+    background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif;
+    margin: 0; padding: 0; transition: background 0.5s ease;
+}
+
+/* --- Setup Modal --- */
+#setup-modal {
+    position: fixed; inset: 0; background: var(--bg); z-index: 10000;
+    display: flex; align-items: center; justify-content: center;
+}
+.modal-content { text-align: center; width: 85%; }
+.modal-content h1 { font-family: 'Lexend'; font-size: 32px; color: var(--g-blue); }
+.modal-content input {
+    width: 80%; padding: 15px; border-radius: 12px; border: 1px solid #333;
+    background: #111; color: white; margin-top: 20px; outline: none; text-align: center;
+}
+.setup-btn { background: var(--g-blue); color: white; border: none; padding: 15px 40px; border-radius: 50px; margin-top: 30px; font-weight: bold; }
+
+/* --- Header --- */
+header { padding: 40px 25px 20px; display: flex; justify-content: space-between; align-items: center; }
+#user-display { font-family: 'Lexend'; font-size: 22px; margin: 0; }
+.level-badge { font-size: 9px; color: var(--primary); font-weight: 900; letter-spacing: 2px; margin-top: 5px; }
+.profile-frame { width: 55px; height: 55px; border-radius: 50%; border: 2px solid #333; position: relative; overflow: hidden; }
+.profile-frame img { width: 100%; height: 100%; object-fit: cover; }
+
+/* --- UI Logic --- */
+.tab-content { display: none; animation: slideUp 0.4s ease; }
+.active-tab { display: block; }
+@keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* --- Progress Circle --- */
+.circle-box { position: relative; width: 180px; height: 180px; margin: 0 auto 40px; }
+.ring-bg { fill: none; stroke: #111; stroke-width: 10; }
+.ring-bar {
+    fill: none; stroke: var(--primary); stroke-width: 10; stroke-linecap: round;
+    stroke-dasharray: 502; stroke-dashoffset: 502; transition: 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.pct-info { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+.pct-info h2 { font-family: 'Lexend'; font-size: 36px; margin: 0; }
+.pct-info span { font-size: 10px; color: #555; letter-spacing: 2px; }
+
+/* --- Task System --- */
+.task-row {
+    background: var(--card); border: 1px solid rgba(255,255,255,0.03);
+    padding: 18px; border-radius: 20px; margin-bottom: 12px;
+    display: flex; align-items: center; transition: 0.3s;
+}
+.task-row.done { background: rgba(52, 168, 83, 0.08); border-color: var(--g-green); }
+.task-row input { width: 20px; height: 20px; accent-color: var(--g-green); }
+.task-row label { flex: 1; margin-left: 15px; font-weight: 500; font-size: 15px; }
+
+/* --- Dock --- */
+.dock {
+    position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
+    background: rgba(15,15,15,0.8); backdrop-filter: blur(20px);
+    display: flex; gap: 40px; padding: 12px 30px; border-radius: 50px; border: 1px solid #222;
+}
+.dock i { font-size: 22px; color: #444; transition: 0.3s; }
+.dock i.active { color: var(--g-blue); }
+
+/* --- AI Chat --- */
+.chat-area { height: 50vh; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+.ai-msg { background: #111; padding: 15px; border-radius: 20px 20px 20px 5px; font-size: 14px; line-height: 1.6; max-width: 85%; border: 1px solid #222; }
+.user-msg { background: var(--g-blue); color: white; padding: 12px 18px; border-radius: 20px 20px 5px 20px; align-self: flex-end; font-size: 14px; font-weight: bold; }

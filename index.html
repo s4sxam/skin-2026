@@ -1,177 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.css">
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-<style>
-  :root { --spotify-green: #1DB954; --bg-black: #080808; --glass: rgba(255, 255, 255, 0.05); }
-  body { font-family: 'Inter', 'Segoe UI', sans-serif; background-color: var(--bg-black); color: white; margin: 0; padding: 20px; overflow-x: hidden; }
-  
-  /* Glassmorphism Effect */
-  .glass-card { background: var(--glass); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 20px; margin-bottom: 20px; }
-
-  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-  .streak-badge { background: #333; padding: 5px 15px; border-radius: 20px; font-weight: bold; color: #ff9800; border: 1px solid #ff9800; font-size: 14px; display: flex; align-items: center; gap: 5px; }
-
-  .greeting { font-size: 14px; color: #888; margin-bottom: 5px; letter-spacing: 1px; }
-  .main-title { font-size: 24px; font-weight: 900; margin: 0 0 20px 0; background: linear-gradient(to right, #1DB954, #fff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-  /* Progress Arc */
-  .stats-section { display: flex; justify-content: center; margin-bottom: 30px; position: relative; }
-  .circle-svg { transform: rotate(-90deg); filter: drop-shadow(0 0 10px rgba(29, 185, 84, 0.3)); }
-  .circle-bg { fill: none; stroke: #222; stroke-width: 8; }
-  .circle-progress { fill: none; stroke: var(--spotify-green); stroke-width: 8; stroke-linecap: round; stroke-dasharray: 440; stroke-dashoffset: 440; transition: 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
-  .pct-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
-  .pct-text h1 { margin: 0; font-size: 32px; font-weight: 900; }
-  .pct-text span { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 2px; }
-
-  /* Routine Items */
-  .section-label { font-size: 12px; font-weight: bold; color: #555; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; display: block; }
-  .item { display: flex; align-items: center; background: rgba(255,255,255,0.03); padding: 14px; border-radius: 12px; margin-bottom: 10px; transition: 0.3s; border-left: 0px solid var(--spotify-green); }
-  .item:active { scale: 0.98; }
-  .item.checked { background: rgba(29, 185, 84, 0.1); border-left: 4px solid var(--spotify-green); }
-  
-  input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--spotify-green); cursor: pointer; margin-right: 15px; }
-  label { flex: 1; font-size: 15px; font-weight: 500; cursor: pointer; }
-
-  /* Special Inputs */
-  .sleep-box { display: flex; align-items: center; gap: 10px; margin-top: 5px; }
-  .input-field { background: #222; border: 1px solid #444; color: white; border-radius: 8px; padding: 10px; width: 80px; text-align: center; font-family: inherit; }
-
-  .reminder-popup { background: linear-gradient(45deg, #ff9800, #e65100); color: black; padding: 15px; border-radius: 15px; text-align: center; font-weight: 800; margin-bottom: 20px; display: none; animation: pulse 2s infinite; }
-  @keyframes pulse { 0% { scale: 1; } 50% { scale: 1.02; } 100% { scale: 1; } }
-
-  .wrapped-teaser { border: 1px solid #333; padding: 30px; border-radius: 20px; text-align: center; background: radial-gradient(circle at center, #111, #000); }
-  .footer-tanay { text-align: center; padding: 40px 0; font-size: 10px; letter-spacing: 5px; color: #444; font-weight: bold; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Architect OS | God Mode</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 </head>
 <body>
 
-<div class="header">
-  <div class="greeting" id="time-greet">UPDATING...</div>
-  <div class="streak-badge"><i class="fas fa-fire"></i> STREAK: <span id="streak-val">0</span></div>
-</div>
-<h1 class="main-title">SKIN RECOVERY 2026</h1>
+    <!-- Onboarding Modal -->
+    <div id="setup-modal">
+        <div class="modal-content">
+            <h1>Identity Check</h1>
+            <p>Welcome to the Architect Mainframe. Please identify yourself.</p>
+            <input type="text" id="user-name-input" placeholder="Enter Architect Name...">
+            <button class="setup-btn" onclick="saveUserName()">INITIALIZE</button>
+        </div>
+    </div>
 
-<!-- ARC PROGRESS -->
-<div class="stats-section">
-  <svg width="160" height="160" class="circle-svg">
-    <circle cx="80" cy="80" r="70" class="circle-bg"></circle>
-    <circle id="progress-bar" cx="80" cy="80" r="70" class="circle-progress"></circle>
-  </svg>
-  <div class="pct-text">
-    <h1 id="pct">0%</h1>
-    <span>Complete</span>
-  </div>
-</div>
+    <!-- Header Area -->
+    <header>
+        <div class="user-profile">
+            <h1 id="user-display">ARCHITECT</h1>
+            <div class="level-badge" id="level-badge">LEVEL 1: ROOKIE</div>
+        </div>
+        <div class="profile-frame">
+            <img id="profile-img" src="https://via.placeholder.com/60" alt="Face Scan">
+            <input type="file" onchange="loadPhoto(event)">
+        </div>
+    </header>
 
-<div id="bedsheet-notif" class="reminder-popup"><i class="fas fa-exclamation-triangle"></i> BED SHEET CHANGE DAY!</div>
+    <!-- Main Content -->
+    <main id="main-ui">
+        <!-- Dashboard Tab -->
+        <div id="home" class="tab-content active-tab">
+            <div class="progress-section">
+                <div class="circle-box">
+                    <svg width="180" height="180">
+                        <circle cx="90" cy="90" r="80" class="ring-bg"></circle>
+                        <circle id="ring-bar" cx="90" cy="90" r="80" class="ring-bar"></circle>
+                    </svg>
+                    <div class="pct-info">
+                        <h2 id="pct-val">0%</h2>
+                        <span>COMPLETE</span>
+                    </div>
+                </div>
+            </div>
 
-<!-- MORNING -->
-<div class="glass-card">
-  <span class="section-label">☀️ Active Morning</span>
-  <div class="item"><input type="checkbox" id="m1" class="task"><label>Face Wash </label></div>
-  <div class="item"><input type="checkbox" id="m2" class="task"><label>Use Cream </label></div>
-  <div class="item"><input type="checkbox" id="m3" class="task"><label>SPF 50 Protection ☀️</label></div>
-</div>
+            <div class="task-grid" id="task-container">
+                <!-- Dynamic Tasks -->
+            </div>
+        </div>
 
-<!-- NIGHT -->
-<div class="glass-card">
-  <span class="section-label">🌙 Night Recovery</span>
-  <div class="item"><input type="checkbox" id="n1" class="task"><label>Face Wash </label></div>
-  <div class="item"><input type="checkbox" id="n2" class="task"><label>Clean Spots </
-                                                                                          label></div>
-  <div class="item"><input type="checkbox" id="n3" class="task"><label>Niacinamide✨</label></div>
-  <div class="sleep-box">
-    <label style="color:#888; font-size:12px">SLEEP HOURS:</label>
-    <input type="number" id="sleep" class="input-field" placeholder="0.0" onchange="saveData()">
-  </div>
-</div>
+        <!-- Calendar Tab -->
+        <div id="calendar" class="tab-content">
+            <h3 class="section-label">BATTLEFIELD CALENDAR</h3>
+            <div class="cal-grid" id="cal-grid"></div>
+            <div class="stat-card">
+                <p>CURRENT STREAK: <span id="streak-val">0</span> DAYS</p>
+            </div>
+        </div>
 
-<!-- LIFESTYLE -->
-<div class="glass-card">
-  <span class="section-label">🥗 Lifestyle Guard</span>
-  <div class="item"><input type="checkbox" id="l1" class="task"><label>No Sugar/Oily Food 🍔</label></div>
-  <div class="item"><input type="checkbox" id="l2" class="task"><label>3L Water Goal 💧</label></div>
-  <div class="item"><input type="checkbox" id="l3" class="task"><label>Helthy </label></div>
-</div>
+        <!-- AI Terminal Tab -->
+        <div id="ai" class="tab-content">
+            <div id="chat-box" class="chat-area">
+                <div class="ai-msg">Terminal active. System status: Optimal. How can I help you, Architect?</div>
+            </div>
+            <div class="input-container">
+                <input type="text" id="chat-input" placeholder="Enter Command...">
+                <button onclick="sendMsg()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </main>
 
-<!-- WRAPPED LOCK -->
-<div class="wrapped-teaser" id="wrapped-section">
-  <i class="fas fa-lock" style="font-size:24px; color:#1DB954; margin-bottom:10px"></i>
-  <p style="font-size:12px; color:#666">Your 2026 Wrapped is being analyzed.</p>
-</div>
+    <!-- Navigation Dock -->
+    <nav class="dock">
+        <i class="fas fa-th-large active" onclick="switchTab('home', this)"></i>
+        <i class="fas fa-calendar-alt" onclick="switchTab('calendar', this)"></i>
+        <i class="fas fa-sparkles" onclick="switchTab('ai', this)"></i>
+    </nav>
 
-<div class="footer-tanay">DESIGNED BY TANAY</div>
-
-<script>
-  const tasks = document.querySelectorAll('.task');
-  const progressBar = document.getElementById('progress-bar');
-  const pctText = document.getElementById('pct');
-
-  function updateProgress() {
-    let checked = 0;
-    tasks.forEach(t => { 
-      if(t.checked) {
-        checked++;
-        t.parentElement.classList.add('checked');
-      } else {
-        t.parentElement.classList.remove('checked');
-      }
-    });
-
-    const percent = Math.round((checked / tasks.length) * 100);
-    progressBar.style.strokeDashoffset = 440 - (440 * percent) / 100;
-    pctText.innerText = percent + "%";
-
-    // Confetti effect on 100%
-    if(percent === 100 && localStorage.getItem('lastDone') !== new Date().toDateString()) {
-      confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#1DB954', '#ffffff'] });
-      localStorage.setItem('lastDone', new Date().toDateString());
-      updateStreak();
-    }
-    saveData();
-  }
-
-  function saveData() {
-    tasks.forEach(t => localStorage.setItem('tanay_' + t.id, t.checked));
-    localStorage.setItem('tanay_sleep', document.getElementById('sleep').value);
-  }
-
-  function updateStreak() {
-    let streak = parseInt(localStorage.getItem('tanay_streak') || 0);
-    streak++;
-    localStorage.setItem('tanay_streak', streak);
-    document.getElementById('streak-val').innerText = streak;
-  }
-
-  function setGreeting() {
-    const hr = new Date().getHours();
-    let greet = "";
-    if(hr < 12) greet = "GOOD MORNING, TANAY";
-    else if(hr < 18) greet = "STAY FOCUSED, TANAY";
-    else greet = "TIME TO RECOVER, TANAY";
-    document.getElementById('time-greet').innerText = greet;
-  }
-
-  window.onload = () => {
-    setGreeting();
-    tasks.forEach(t => {
-      t.checked = localStorage.getItem('tanay_' + t.id) === 'true';
-      t.addEventListener('change', updateProgress);
-    });
-    document.getElementById('sleep').value = localStorage.getItem('tanay_sleep') || "";
-    document.getElementById('streak-val').innerText = localStorage.getItem('tanay_streak') || 0;
-    
-    // Check Bed Sheets (15th & Last Day)
-    const d = new Date().getDate();
-    const last = new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate();
-    if(d === 15 || d === last) document.getElementById('bedsheet-notif').style.display = 'block';
-
-    updateProgress();
-  };
-</script>
-
+    <script src="script.js"></script>
 </body>
 </html>
