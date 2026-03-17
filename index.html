@@ -15,7 +15,8 @@
         <div class="modal-content">
             <h1>Identity Check</h1>
             <p>Welcome to the Architect Mainframe. Please identify yourself.</p>
-            <input type="text" id="user-name-input" placeholder="Enter Architect Name...">
+            <input type="text" id="user-name-input" placeholder="Enter Architect Name..."
+                   onkeydown="if(event.key==='Enter') saveUserName()">
             <button class="setup-btn" onclick="saveUserName()">INITIALIZE</button>
         </div>
     </div>
@@ -26,9 +27,11 @@
             <h1 id="user-display">ARCHITECT</h1>
             <div class="level-badge" id="level-badge">LEVEL 1: ROOKIE</div>
         </div>
+        <!-- FIX: Wrapped in label so clicking the avatar triggers file upload -->
         <div class="profile-frame">
             <img id="profile-img" src="https://via.placeholder.com/60" alt="Face Scan">
-            <input type="file" onchange="loadPhoto(event)">
+            <label for="photo-upload" class="photo-overlay" title="Upload photo"></label>
+            <input type="file" id="photo-upload" accept="image/*" onchange="loadPhoto(event)">
         </div>
     </header>
 
@@ -48,7 +51,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="task-grid" id="task-container">
                 <!-- Dynamic Tasks -->
             </div>
@@ -69,19 +71,22 @@
                 <div class="ai-msg">Terminal active. System status: Optimal. How can I help you, Architect?</div>
             </div>
             <div class="input-container">
-                <input type="text" id="chat-input" placeholder="Enter Command...">
+                <input type="text" id="chat-input" placeholder="Enter Command..."
+                       onkeydown="if(event.key==='Enter') sendMsg()">
                 <button onclick="sendMsg()"><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
     </main>
 
     <!-- Navigation Dock -->
+    <!-- FIX: fa-sparkles does not exist in FA 6.4.0 free — replaced with fa-bolt -->
     <nav class="dock">
         <i class="fas fa-th-large active" onclick="switchTab('home', this)"></i>
         <i class="fas fa-calendar-alt" onclick="switchTab('calendar', this)"></i>
-        <i class="fas fa-sparkles" onclick="switchTab('ai', this)"></i>
+        <i class="fas fa-bolt" onclick="switchTab('ai', this)"></i>
     </nav>
 
-    <script src="script.js"></script>
+    <!-- FIX: Was <script src="script.js"> but the file is named main.js -->
+    <script src="main.js"></script>
 </body>
 </html>
