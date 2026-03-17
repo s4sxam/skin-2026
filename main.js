@@ -6,27 +6,29 @@
     { id: 'n2', text: 'Retinol Recovery ✨', time: 'night' }
 ];
 
-// ─── FIX: loadPhoto was referenced in HTML but never defined ───────────────────
+// Chat history for multi-turn Gemini conversation
+let chatHistory = [];
+
+// ─── Photo Upload ─────────────────────────────────────────────────────────────
 function loadPhoto(event) {
     const file = event.target.files[0];
     if (!file) return;
     const reader = new FileReader();
     reader.onload = function(e) {
-        const img = document.getElementById('profile-img');
-        img.src = e.target.result;
+        document.getElementById('profile-img').src = e.target.result;
         localStorage.setItem('v7_photo', e.target.result);
     };
     reader.readAsDataURL(file);
 }
 
-// ─── FIX: sendMsg was referenced in HTML but never defined ────────────────────
-function sendMsg() {
+// ─── AI Chat (calls /api/chat serverless function) ────────────────────────────
+async function sendMsg() {
     const input = document.getElementById('chat-input');
     const box   = document.getElementById('chat-box');
     const msg   = input.value.trim();
     if (!msg) return;
 
-    // Render user message
+    // Render user bubble
     const userBubble = document.createElement('div');
     userBubble.className = 'user-msg';
     userBubble.innerText = msg;
@@ -36,39 +38,48 @@ function sendMsg() {
 
     // Thinking indicator
     const thinking = document.createElement('div');
-    thinking.className = 'ai-msg';
-    thinking.innerText = '...';
+    thinking.className = 'ai-msg thinking';
+    thinking.innerHTML = '<span>●</span><span>●</span><span>●</span>';
     box.appendChild(thinking);
     box.scrollTop = box.scrollHeight;
 
-    // Simple rule-based AI replies (no external API needed)
-    const replies = {
-        streak:      () => `Your current streak is ${localStorage.getItem('v7_streak') || 0} days. Keep going!`,
-        progress:    () => `You've completed ${getCompletedCount()} of ${tasks.length} tasks today.`,
-        level:       () => document.getElementById('level-badge').innerText,
-        hello:       () => 'System online. Ready to optimize your protocol, Architect.',
-        hi:          () => 'Greetings, Architect. All systems operational.',
-        help:        () => 'Ask me about: streak, progress, level, tasks, or motivation.',
-        task:        () => 'Stay consistent. Every task you complete builds the streak.',
-        motivation:  () => '💪 You are the architect of your own skin. Build it deliberately.',
-        reset:       () => { if(confirm('Reset ALL data?')) { localStorage.clear(); location.reload(); } return 'Resetting...'; },
-    };
+    // Add user message to history
+    chatHistory.push({ role: 'user', text: msg });
 
-    setTimeout(() => {
-        let response = 'Command received. Keep executing, Architect. 🔥';
-        const lower = msg.toLowerCase();
-        for (const [key, fn] of Object.entries(replies)) {
-            if (lower.includes(key)) { response = fn(); break; }
-        }
-        thinking.innerText = response;
-        box.scrollTop = box.scrollHeight;
-    }, 600);
+    try {
+        const res = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                message: msg,
+                history: chatHistory.slice(-10) // send last 10 messages for context
+            })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error || 'Unknown error');
+
+        const reply = data.reply;
+
+        // Replace thinking bubble with real reply
+        thinking.className = 'ai-msg';
+        thinking.innerHTML = '';
+        thinking.innerText = reply;
+
+        // Add assistant reply to history
+        chatHistory.push({ role: 'model', text: reply });
+
+    } catch (err) {
+        thinking.className = 'ai-msg';
+        thinking.innerText = '⚠️ Connection error. Check your API setup.';
+        console.error('Chat error:', err);
+    }
+
+    box.scrollTop = box.scrollHeight;
 }
 
-function getCompletedCount() {
-    return tasks.filter(t => localStorage.getItem('v7_' + t.id) === 'true').length;
-}
-
+// ─── Onboarding ───────────────────────────────────────────────────────────────
 function saveUserName() {
     const name = document.getElementById('user-name-input').value.trim();
     if (!name) return;
@@ -78,6 +89,7 @@ function saveUserName() {
     initialize();
 }
 
+// ─── Tab Navigation ───────────────────────────────────────────────────────────
 function switchTab(id, el) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active-tab'));
     document.querySelectorAll('.dock i').forEach(i => i.classList.remove('active'));
@@ -86,6 +98,7 @@ function switchTab(id, el) {
     if (id === 'calendar') renderCalendar();
 }
 
+// ─── Tasks ────────────────────────────────────────────────────────────────────
 function updateUI() {
     const hr        = new Date().getHours();
     const container = document.getElementById('task-container');
@@ -131,16 +144,16 @@ function updateProgress() {
     }
 }
 
-// ─── FIX: Calendar was hardcoded to January 2026 ──────────────────────────────
+// ─── Calendar ─────────────────────────────────────────────────────────────────
 function renderCalendar() {
-    const grid    = document.getElementById('cal-grid');
+    const grid     = document.getElementById('cal-grid');
     grid.innerHTML = '';
-    const history = JSON.parse(localStorage.getItem('v7_history') || '{}');
+    const history  = JSON.parse(localStorage.getItem('v7_history') || '{}');
 
-    const now        = new Date();
-    const year       = now.getFullYear();
-    const month      = now.getMonth();           // current month (0-indexed)
-    const daysInMonth = new Date(year, month + 1, 0).getDate(); // correct day count
+    const now         = new Date();
+    const year        = now.getFullYear();
+    const month       = now.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
 
     for (let i = 1; i <= daysInMonth; i++) {
         const d   = new Date(year, month, i);
@@ -152,7 +165,6 @@ function renderCalendar() {
         grid.appendChild(day);
     }
 
-    // Update streak display
     const streakEl = document.getElementById('streak-val');
     if (streakEl) streakEl.innerText = localStorage.getItem('v7_streak') || 0;
 }
@@ -163,6 +175,7 @@ function saveHistory(success) {
     localStorage.setItem('v7_history', JSON.stringify(history));
 }
 
+// ─── Init ─────────────────────────────────────────────────────────────────────
 function initialize() {
     const name = localStorage.getItem('v7_user');
     if (!name) {
@@ -171,11 +184,9 @@ function initialize() {
         document.getElementById('setup-modal').style.display = 'none';
         document.getElementById('user-display').innerText = name + ' ARCHITECT';
 
-        // Restore saved photo
         const savedPhoto = localStorage.getItem('v7_photo');
         if (savedPhoto) document.getElementById('profile-img').src = savedPhoto;
 
-        // Level logic
         const streak = parseInt(localStorage.getItem('v7_streak') || 0);
         let level = 'LEVEL 1: ROOKIE';
         if (streak >= 7)  level = 'LEVEL 2: WARRIOR';
