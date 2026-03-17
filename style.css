@@ -22,8 +22,8 @@ body {
 .modal-content p  { color: #888; font-size: 14px; }
 .modal-content input {
     width: 80%; padding: 15px; border-radius: 12px; border: 1px solid #333;
-    background: #111; color: white; margin-top: 20px; outline: none; text-align: center;
-    font-size: 16px;
+    background: #111; color: white; margin-top: 20px; outline: none;
+    text-align: center; font-size: 16px;
 }
 .setup-btn {
     background: var(--g-blue); color: white; border: none; padding: 15px 40px;
@@ -44,22 +44,19 @@ header {
 }
 
 /* --- Profile Frame --- */
-/* FIX: file input hidden, overlay label covers the frame so clicking the photo opens picker */
 .profile-frame {
     width: 55px; height: 55px; border-radius: 50%;
-    border: 2px solid #333; position: relative; overflow: hidden;
-    cursor: pointer;
+    border: 2px solid #333; position: relative; overflow: hidden; cursor: pointer;
 }
 .profile-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .photo-overlay {
     position: absolute; inset: 0; cursor: pointer; z-index: 2;
-    background: transparent;
-    display: flex; align-items: center; justify-content: center;
+    background: transparent; display: flex; align-items: center; justify-content: center;
 }
 .photo-overlay:hover { background: rgba(66,133,244,0.25); }
 #photo-upload { display: none; }
 
-/* --- UI Logic --- */
+/* --- Tabs --- */
 .tab-content { display: none; animation: slideUp 0.4s ease; }
 .active-tab  { display: block; }
 @keyframes slideUp {
@@ -67,11 +64,10 @@ header {
     to   { opacity: 1; transform: translateY(0); }
 }
 
-/* --- Main Content Padding (FIX: prevents content hiding under dock) --- */
+/* --- Main padding (prevents content hiding under dock) --- */
 #main-ui { padding: 0 20px 110px; }
 
 /* --- Progress Circle --- */
-/* FIX: added centering and top padding */
 .progress-section { display: flex; justify-content: center; padding: 20px 0 10px; }
 .circle-box { position: relative; width: 180px; height: 180px; margin: 0 auto 40px; }
 .ring-bg  { fill: none; stroke: #111; stroke-width: 10; }
@@ -85,11 +81,11 @@ header {
     position: absolute; top: 50%; left: 50%;
     transform: translate(-50%, -50%); text-align: center;
 }
-.pct-info h2    { font-family: 'Lexend'; font-size: 36px; margin: 0; }
-.pct-info span  { font-size: 10px; color: #555; letter-spacing: 2px; }
+.pct-info h2   { font-family: 'Lexend'; font-size: 36px; margin: 0; }
+.pct-info span { font-size: 10px; color: #555; letter-spacing: 2px; }
 
-/* --- Task System --- */
-.task-grid  { padding-top: 8px; }
+/* --- Tasks --- */
+.task-grid { padding-top: 8px; }
 .task-row {
     background: var(--card); border: 1px solid rgba(255,255,255,0.03);
     padding: 18px; border-radius: 20px; margin-bottom: 12px;
@@ -103,15 +99,18 @@ header {
 .dock {
     position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
     background: rgba(15,15,15,0.85); backdrop-filter: blur(20px);
-    display: flex; gap: 40px; padding: 12px 30px; border-radius: 50px; border: 1px solid #222;
-    z-index: 1000;
+    display: flex; gap: 40px; padding: 12px 30px; border-radius: 50px;
+    border: 1px solid #222; z-index: 1000;
 }
 .dock i        { font-size: 22px; color: #444; transition: 0.3s; cursor: pointer; }
 .dock i.active { color: var(--g-blue); }
 .dock i:hover  { color: #888; }
 
 /* --- Calendar --- */
-.section-label { font-family: 'Lexend'; font-size: 12px; letter-spacing: 3px; color: #555; margin-bottom: 20px; }
+.section-label {
+    font-family: 'Lexend'; font-size: 12px; letter-spacing: 3px;
+    color: #555; margin-bottom: 20px;
+}
 .cal-grid {
     display: grid; grid-template-columns: repeat(7, 1fr);
     gap: 6px; margin-bottom: 20px;
@@ -121,9 +120,8 @@ header {
     display: flex; align-items: center; justify-content: center;
     font-size: 12px; font-weight: 600; color: #555;
 }
-/* FIX: .green and .red classes applied dynamically by JS */
 .cal-day.green { background: rgba(52,168,83,0.25); border-color: var(--g-green); color: var(--g-green); }
-.cal-day.red   { background: rgba(234,67,53,0.15);  border-color: #EA4335;       color: #EA4335; }
+.cal-day.red   { background: rgba(234,67,53,0.15);  border-color: #EA4335; color: #EA4335; }
 .stat-card {
     background: var(--card); border-radius: 16px; padding: 15px 20px;
     font-size: 13px; letter-spacing: 1px; border: 1px solid #1a1a1a;
@@ -137,8 +135,7 @@ header {
 }
 .ai-msg {
     background: #111; padding: 15px; border-radius: 20px 20px 20px 5px;
-    font-size: 14px; line-height: 1.6; max-width: 85%;
-    border: 1px solid #222;
+    font-size: 14px; line-height: 1.6; max-width: 85%; border: 1px solid #222;
 }
 .user-msg {
     background: var(--g-blue); color: white; padding: 12px 18px;
@@ -146,10 +143,26 @@ header {
     font-size: 14px; font-weight: bold; max-width: 80%;
 }
 
-/* FIX: .input-container was used in HTML but never defined in CSS */
+/* --- Thinking animation --- */
+.thinking {
+    display: flex; gap: 5px; align-items: center;
+    padding: 16px 20px;
+}
+.thinking span {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #555; display: inline-block;
+    animation: bounce 1.2s infinite ease-in-out;
+}
+.thinking span:nth-child(2) { animation-delay: 0.2s; }
+.thinking span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes bounce {
+    0%, 80%, 100% { transform: scale(0.7); opacity: 0.4; }
+    40%            { transform: scale(1.1); opacity: 1; }
+}
+
+/* --- Input Container --- */
 .input-container {
-    display: flex; gap: 10px; align-items: center;
-    position: sticky; bottom: 0;
+    display: flex; gap: 10px; align-items: center; position: sticky; bottom: 0;
 }
 .input-container input {
     flex: 1; padding: 14px 18px; border-radius: 50px;
